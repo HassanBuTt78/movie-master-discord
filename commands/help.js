@@ -4,8 +4,8 @@ const message = "### Movie Master is  a simple bot that can help you to watch an
 
 module.exports = {
     data: new SlashCommandBuilder()
-        .setName('ping')
-        .setDescription('Checks if the bot is alive.')
+        .setName('help')
+        .setDescription('Display commands and useful info')
     ,
     async execute(interaction)
     {
