@@ -1,5 +1,5 @@
 const database = require("./database.js");
-const parsers = require('./utils/resultParser.js')
+const parsers = require("./utils/resultParser.js");
 const {
   Client,
   GatewayIntentBits,
@@ -72,13 +72,12 @@ client.on("interactionCreate", async (interaction) => {
         content: "`There was an error executing this command`",
       });
     } catch (e) {
-      try{
-
+      try {
         await interaction.editReply({
           content: "`There was an error executing this command`",
         });
-      }catch(e){
-        console.log(e)
+      } catch (e) {
+        console.log(e);
       }
     }
   }
@@ -87,19 +86,31 @@ client.on("interactionCreate", async (interaction) => {
 client.on("interactionCreate", async (interaction) => {
   if (!interaction.isButton()) return;
   const [type, movID] = interaction.customId.split("-");
-  if (!type === 'mov') {return}
-    await interaction.deferUpdate()
-    const movie = await database.movieById(movID)
-    await interaction.editReply(parsers.parseMovie(movie, interaction.user.id));
+  if (!type === "mov") {
+    return;
+  }
+  await interaction.deferUpdate();
+  const movie = await database.movieById(movID);
+  await interaction.editReply(parsers.parseMovie(movie, interaction.user.id));
 });
 
-
-client.on('guildCreate', (guild) => {
+client.on("guildCreate", (guild) => {
   const welcomeMessage = `Hey @everyone \nIn mood for a movie? \nJust use to me watch or download movies for free in 2 clicks.\nDo \`/help\` for more on how.`;
   const defaultChannel = guild.systemChannel;
 
+  const rest = new REST({ version: "10" }).setToken(process.env.TOKEN);
+  rest
+    .put(Routes.applicationGuildCommands(process.env.CLIENT_ID, guild.id), {
+      body: commands,
+    })
+    .then(() =>
+      console.log("Successfully updated commands for guild " + guild.id)
+    )
+    .catch(console.error);
+
   if (defaultChannel) {
-    defaultChannel.send(welcomeMessage)
+    defaultChannel
+      .send(welcomeMessage)
       .then((message) => console.log(`Sent welcome message in ${guild.name}`))
       .catch(console.error);
   }
