@@ -1,6 +1,8 @@
 const mongoose = require("mongoose");
 
 let Movie;
+let User;
+let Stat;
 
 const connectDB = async () => {
   let db = mongoose
@@ -27,6 +29,23 @@ const connectDB = async () => {
     },
     { versionKey: false }
   );
+  const statSchema = new mongoose.Schema(
+    {
+      serverCount: Number,
+      userCount: Number,
+      queries: Number,
+    },
+    { versionKey: false }
+  );
+  const userSchema = new mongoose.Schema(
+    {
+      userID: Number,
+    },
+    { versionKey: false }
+  );
+
+  User = new mongoose.model("User", userSchema);
+  Stat = new mongoose.model("Stat", statSchema);
   Movie = new mongoose.model("Movie", movieSchema);
 };
 
@@ -95,6 +114,44 @@ const getRandom = async () => {
   return await found;
 };
 
+const updateStats = async (key, value) => {
+  Stat.findOneAndUpdate({ key: key }, { value: value });
+};
+const getstats = async (key) => {
+  let found = await stat.findOne({ _id: key });
+  return await found;
+};
+
+const addUser = async (userId) => {
+  const user = await User.findOne({ userId: userId });
+  console.log(user)
+  console.log(!user)
+  if (!user) {
+    await User.insertOne({ userId: userId });
+  } else {
+    console.log("Value already exists in the set");
+  }
+  let userCount;
+  await User.count({}).then((count) => {
+    userCount = count
+  });
+  return userCount;
+};
+
+const getUsers = async () => {
+  const uniqueUsers = new Set();
+  User.find({}, (err, users) => {
+    if (err) {
+      console.error("Error retrieving users:", err);
+    } else {
+      users.forEach((user) => {
+        uniqueUsers.add(user.userId);
+      });
+    }
+  });
+  return uniqueUsers;
+};
+
 module.exports = {
   connectDB,
   query,
@@ -102,4 +159,7 @@ module.exports = {
   genreQuery,
   getRandom,
   movieById,
+  updateStats,
+  getUsers,
+  addUser,
 };

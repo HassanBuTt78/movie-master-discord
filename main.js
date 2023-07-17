@@ -1,5 +1,6 @@
 const database = require("./database.js");
 const parsers = require("./utils/resultParser.js");
+const stats = require("./utils/statsRecorder.js");
 const {
   Client,
   GatewayIntentBits,
@@ -39,6 +40,8 @@ for (const file of commandFiles) {
 }
 
 client.on("ready", async () => {
+  stats.recordServerCount(client);
+
   // Get all ids of the servers
   const guild_ids = client.guilds.cache.map((guild) => guild.id);
 
@@ -57,12 +60,12 @@ client.on("ready", async () => {
   console.log(`Logged in as ${client.user.tag}!`);
 });
 
+//Handling Commmand Interactions
 client.on("interactionCreate", async (interaction) => {
   if (!interaction.isCommand()) return;
-
   const command = client.commands.get(interaction.commandName);
   if (!command) return;
-
+  stats.recordUserActivity(interaction)
   try {
     await command.execute(interaction);
   } catch (error) {
@@ -83,6 +86,7 @@ client.on("interactionCreate", async (interaction) => {
   }
 });
 
+//Handling Button Interactions
 client.on("interactionCreate", async (interaction) => {
   if (!interaction.isButton()) return;
   const [type, movID] = interaction.customId.split("-");
