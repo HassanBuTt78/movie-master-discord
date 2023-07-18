@@ -1,6 +1,6 @@
 const database = require("./database.js");
 const parsers = require("./utils/resultParser.js");
-const stats = require("./utils/statsRecorder.js");
+const stats = require("./utils/stats.js");
 const {
   Client,
   GatewayIntentBits,
@@ -12,8 +12,6 @@ require("dotenv").config();
 
 const fs = require("fs");
 const path = require("path");
-
-database.connectDB();
 
 const client = new Client({
   intents: [
@@ -40,8 +38,6 @@ for (const file of commandFiles) {
 }
 
 client.on("ready", async () => {
-  stats.recordServerCount(client);
-
   // Get all ids of the servers
   const guild_ids = client.guilds.cache.map((guild) => guild.id);
 
@@ -58,6 +54,7 @@ client.on("ready", async () => {
   }
 
   console.log(`Logged in as ${client.user.tag}!`);
+  stats.recordServerCount(client);
 });
 
 //Handling Commmand Interactions
@@ -65,7 +62,7 @@ client.on("interactionCreate", async (interaction) => {
   if (!interaction.isCommand()) return;
   const command = client.commands.get(interaction.commandName);
   if (!command) return;
-  stats.recordUserActivity(interaction)
+  stats.recordUserActivity(interaction);
   try {
     await command.execute(interaction);
   } catch (error) {
@@ -120,4 +117,6 @@ client.on("guildCreate", (guild) => {
   }
 });
 
-client.login(process.env.TOKEN);
+database.connectDB().then(() => {
+  client.login(process.env.TOKEN);
+});

@@ -5,7 +5,7 @@ let User;
 let Stat;
 
 const connectDB = async () => {
-  let db = mongoose
+  let db = await mongoose
     .connect(process.env.DATABASE, {
       useNewUrlParser: true,
       useUnifiedTopology: true,
@@ -39,7 +39,7 @@ const connectDB = async () => {
   );
   const userSchema = new mongoose.Schema(
     {
-      userID: Number,
+      userId: Number,
     },
     { versionKey: false }
   );
@@ -114,42 +114,38 @@ const getRandom = async () => {
   return await found;
 };
 
-const updateStats = async (key, value) => {
-  Stat.findOneAndUpdate({ key: key }, { value: value });
+const updateStats = async (update) => {
+  const updated = await Stat.findOneAndUpdate(
+    { _id: "64b2d30c77259452adea05f9" },
+    update
+  );
+  return updated;
 };
-const getstats = async (key) => {
-  let found = await stat.findOne({ _id: key });
+
+const getstats = async () => {
+  let found = await Stat.findOne({ _id: "64b2d30c77259452adea05f9" });
   return await found;
 };
 
 const addUser = async (userId) => {
   const user = await User.findOne({ userId: userId });
-  console.log(user)
-  console.log(!user)
   if (!user) {
-    await User.insertOne({ userId: userId });
+    const newUser = new User({ userId: userId });
+    newUser.save().catch((error) => {
+      console.error(error);
+    });
+    return true;
   } else {
-    console.log("Value already exists in the set");
+    return false;
   }
-  let userCount;
-  await User.count({}).then((count) => {
-    userCount = count
-  });
-  return userCount;
 };
 
-const getUsers = async () => {
-  const uniqueUsers = new Set();
-  User.find({}, (err, users) => {
-    if (err) {
-      console.error("Error retrieving users:", err);
-    } else {
-      users.forEach((user) => {
-        uniqueUsers.add(user.userId);
-      });
-    }
+const countUsers = async () => {
+  let userCount;
+  await User.count({}).then((count) => {
+    userCount = count;
   });
-  return uniqueUsers;
+  return userCount;
 };
 
 module.exports = {
@@ -160,6 +156,7 @@ module.exports = {
   getRandom,
   movieById,
   updateStats,
-  getUsers,
   addUser,
+  getstats,
+  countUsers
 };
