@@ -1,5 +1,5 @@
 const { SlashCommandBuilder } = require("@discordjs/builders");
-const database = require("../database.js");
+const database = require("../database/movieData.js");
 const { parseArray } = require("../utils/resultParser.js");
 
 module.exports = {

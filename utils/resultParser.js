@@ -61,7 +61,7 @@ const parseStats = (stats) => {
     .setTitle("Statistics")
     .addFields({ name: "Servers", value: stats.serverCount.toString() })
     .addFields({ name: "Users", value: stats.userCount.toString() })
-    .addFields({ name: "Movies Serverd", value: stats.queries.toString() })
+    .addFields({ name: "Movies Served", value: stats.queries.toString() })
     .addFields({ name: "Discord.js", value: "v14.11.0" })
     .addFields({ name: "Node.js", value: "v18.15.0" })
     .setColor((0, 219, 212))

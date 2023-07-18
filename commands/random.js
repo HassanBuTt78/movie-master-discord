@@ -1,5 +1,5 @@
 const { SlashCommandBuilder } = require('@discordjs/builders');
-const {getRandom} = require('../database')
+const {getRandom} = require('../database/movieData.js')
 const {parseMovie} =  require('../utils/resultParser')
 
 module.exports = {

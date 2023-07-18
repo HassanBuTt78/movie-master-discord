@@ -1,4 +1,5 @@
-const database = require("./database.js");
+const database = require("./database/database.js");
+const movData = require("./database/movieData.js");
 const parsers = require("./utils/resultParser.js");
 const stats = require("./utils/stats.js");
 const {
@@ -91,7 +92,7 @@ client.on("interactionCreate", async (interaction) => {
     return;
   }
   await interaction.deferUpdate();
-  const movie = await database.movieById(movID);
+  const movie = await movData.movieById(movID);
   await interaction.editReply(parsers.parseMovie(movie, interaction.user.id));
 });
 
@@ -115,6 +116,7 @@ client.on("guildCreate", (guild) => {
       .then((message) => console.log(`Sent welcome message in ${guild.name}`))
       .catch(console.error);
   }
+  stats.recordServerCount(client);
 });
 
 database.connectDB().then(() => {

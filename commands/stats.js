@@ -1,5 +1,5 @@
 const { SlashCommandBuilder } = require('@discordjs/builders');
-const database = require('../database.js')
+const database = require('../database/statsData.js')
 const { parseStats } = require("../utils/resultParser.js");
 
 
