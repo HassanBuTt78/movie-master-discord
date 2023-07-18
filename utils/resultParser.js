@@ -56,7 +56,29 @@ const parseMovie = (obj, user) => {
   return exportt;
 };
 
+const parseStats = (stats) => {
+  const embed = new EmbedBuilder()
+    .setTitle("Statistics")
+    .addFields({ name: "Servers", value: stats.serverCount.toString() })
+    .addFields({ name: "Users", value: stats.userCount.toString() })
+    .addFields({ name: "Movies Serverd", value: stats.queries.toString() })
+    .addFields({ name: "Discord.js", value: "v14.11.0" })
+    .addFields({ name: "Node.js", value: "v18.15.0" })
+    .setColor((0, 219, 212))
+    .setFooter({
+      text: `https://movie-master.uk.to/`,
+      iconURL:
+        "https://clipartix.com/wp-content/uploads/2016/04/Popcorn-clip-art.png",
+    });
+  const exportt = {
+    content: "",
+    embeds: [embed],
+  };
+  return exportt;
+};
+
 module.exports = {
   parseArray,
   parseMovie,
+  parseStats,
 };

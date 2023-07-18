@@ -1,9 +1,11 @@
 const mongoose = require("mongoose");
 
 let Movie;
+let User;
+let Stat;
 
 const connectDB = async () => {
-  let db = mongoose
+  let db = await mongoose
     .connect(process.env.DATABASE, {
       useNewUrlParser: true,
       useUnifiedTopology: true,
@@ -27,6 +29,23 @@ const connectDB = async () => {
     },
     { versionKey: false }
   );
+  const statSchema = new mongoose.Schema(
+    {
+      serverCount: Number,
+      userCount: Number,
+      queries: Number,
+    },
+    { versionKey: false }
+  );
+  const userSchema = new mongoose.Schema(
+    {
+      userId: Number,
+    },
+    { versionKey: false }
+  );
+
+  User = new mongoose.model("User", userSchema);
+  Stat = new mongoose.model("Stat", statSchema);
   Movie = new mongoose.model("Movie", movieSchema);
 };
 
@@ -95,6 +114,40 @@ const getRandom = async () => {
   return await found;
 };
 
+const updateStats = async (update) => {
+  const updated = await Stat.findOneAndUpdate(
+    { _id: "64b2d30c77259452adea05f9" },
+    update
+  );
+  return updated;
+};
+
+const getstats = async () => {
+  let found = await Stat.findOne({ _id: "64b2d30c77259452adea05f9" });
+  return await found;
+};
+
+const addUser = async (userId) => {
+  const user = await User.findOne({ userId: userId });
+  if (!user) {
+    const newUser = new User({ userId: userId });
+    newUser.save().catch((error) => {
+      console.error(error);
+    });
+    return true;
+  } else {
+    return false;
+  }
+};
+
+const countUsers = async () => {
+  let userCount;
+  await User.count({}).then((count) => {
+    userCount = count;
+  });
+  return userCount;
+};
+
 module.exports = {
   connectDB,
   query,
@@ -102,4 +155,8 @@ module.exports = {
   genreQuery,
   getRandom,
   movieById,
+  updateStats,
+  addUser,
+  getstats,
+  countUsers
 };
