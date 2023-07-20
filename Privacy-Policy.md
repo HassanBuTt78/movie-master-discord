@@ -1,8 +1,8 @@
 # Movie Master Discord Bot - Privacy Policy
 
-**Effective Date: [Date]**
+**Effective Date: 20/7/2023**
 
-Thank you for choosing Movie Master Discord bot ("the Bot"). This Privacy Policy explains how we collect and use certain information when you interact with the Bot. By using the Bot, you consent to the practices described in this policy.
+Thank you for choosing Movie Master Discord bot ("Movie Master"). This Privacy Policy explains how we collect and use certain information when you interact with the Bot. By using the Bot, you consent to the practices described in this policy.
 
 ## Information Collection:
 
