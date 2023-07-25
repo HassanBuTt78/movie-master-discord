@@ -13,7 +13,7 @@ require("dotenv").config();
 
 const fs = require("fs");
 const path = require("path");
-
+const DBL = require('dblapi.js');
 const client = new Client({
   intents: [
     GatewayIntentBits.Guilds,
@@ -21,6 +21,11 @@ const client = new Client({
     GatewayIntentBits.MessageContent,
   ],
 });
+
+const dbl = new DBL(process.env.DBLTOKEN, client);
+
+
+
 
 // List of all commands
 const commands = [];
@@ -37,6 +42,10 @@ for (const file of commandFiles) {
   client.commands.set(command.data.name, command);
   commands.push(command.data.toJSON());
 }
+
+dbl.on('posted', () => {
+  console.log('Server count posted!');
+});
 
 client.on("ready", async () => {
   // Get all ids of the servers
