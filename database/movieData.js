@@ -1,74 +1,84 @@
-const { Movie } =  require("./database.js")
+const axios = require("axios");
+const {shuffleArray} = require("../utils/arrayHelper")
 
-const movieById = async (id) => {
-    let found = await Movie.findOne({ _id: id });
-    return await found;
-  };
-  
-  const moviesByGenre = async (genre, amount) => {
-    if (amount == undefined) {
-      let found = await Movie.find({
-        genre: { $regex: genre, $options: "i" },
-      }).limit(30);
-      return await found;
+const movieById = async (movieId) => {
+  const apiUrl = `https://yts.mx/api/v2/movie_details.json?movie_id=${movieId}`;
+
+  try {
+    const response = await axios.get(apiUrl);
+    if (response.status === 200) {
+      return response.data.data.movie;
     } else {
-      let found = await Movie.find({
-        genre: { $regex: genre, $options: "i" },
-      }).limit(amount);
-      return await found;
+      throw new Error("API request failed");
     }
-  };
-  
-  const genreQuery = async (query, genre, amount) => {
-    if (amount == undefined) {
-      let found = await Movie.find({
-        genre: { $regex: genre, $options: "i" },
-        title: { $regex: query, $options: "i" },
-      }).limit(30);
-      return await found;
+  } catch (error) {
+    console.error(`Failed to fetch data from API: ${error.message}`);
+  }
+};
+
+const query = async (query = "", limit = 20, page = 1, genre = "") => {
+  const apiUrl = `https://yts.mx/api/v2/list_movies.json?limit=${limit}&page=${page}&query_term=${query}&genre=${genre}&sort_by=download_count`;
+  try {
+    const response = await axios.get(apiUrl);
+    if(response.status != 200) return {error : "Error 500! There has been a error in server"}
+    if(response.data.data.movie_count == 0) return {error: `No Result for ${query} - double check movie name and spelling.`}
+    return response.data.data.movies
+  } catch (error) {
+    console.error(`Failed to fetch data from API: ${error.message}`);
+  }
+};
+
+const getMoviesWithMost = async (sort, _limit = 4) => {
+  const apiUrl = `https://yts.mx/api/v2/list_movies.json?sort_by=${sort}&limit=${_limit}`;
+
+  try {
+    const response = await axios.get(apiUrl);
+    if (response.status === 200) {
+      return response.data.data.movies;
     } else {
-      let found = await Movie.find({
-        genre: { $regex: genre, $options: "i" },
-        title: { $regex: query, $options: "i" },
-      }).limit(amount);
-      return await found;
+      throw new Error("API request failed");
     }
-  };
-  
-  const query = async (query, amount) => {
-    query = await processString(query);
-  
-    if (amount == undefined) {
-      let found = await Movie.find({ title: { $regex: query } }).limit(30);
-      return await found;
+  } catch (error) {
+    console.error(`Failed to fetch data from API: ${error.message}`);
+  }
+};
+
+const getSimilarMovies = async (_id) => {
+  const apiUrl = ` https://yts.mx/api/v2/movie_suggestions.json?movie_id=${_id}`;
+  try {
+    const response = await axios.get(apiUrl);
+    if (response.status === 200) {
+      return response.data.data.movies;
     } else {
-      let found = await Movie.find({ title: { $regex: query } }).limit(amount);
-      return await found;
+      throw new Error("API request failed");
     }
-  };
+  } catch (error) {
+    console.error(`Failed to fetch data from API: ${error.message}`);
+  }
+};
+
+
+const getPopularMovies = async (_limit = 20) => {
+    const apiUrl = `https://yts.mx/api/v2/list_movies.json?sort_by=download_count&limit=${_limit}&query_term=2023`;
   
-  const processString = async (string) => {
-    let arr = string.split(" ");
-    let arr2 = await arr.map((x) => {
-      return `(?=^.*?${x}.*$)`;
-    });
-    arr2.push("^.*$");
-    let st = arr2.join("");
-    let r = new RegExp(st, "gi");
-    return r;
-  };
-  
-  const getRandom = async () => {
-    let found = Movie.aggregate([
-      { $match: { IMDB_rating: { $gte: "1.5" } } },
-    ]).sample(1);
-    return await found;
+    try {
+      const response = await axios.get(apiUrl);
+      if (response.status === 200) {
+        const movies = response.data.data.movies;
+        shuffleArray(movies)
+        return movies.slice(0,4);
+      } else {
+        throw new Error("API request failed");
+      }
+    } catch (error) {
+      console.error(`Failed to fetch data from API: ${error.message}`);
+    }
   };
 
 module.exports = {
-    getRandom,
-    query,
-    genreQuery,
-    moviesByGenre,
-    movieById
-}
+  movieById,
+  query,
+  getMoviesWithMost,
+  getSimilarMovies,
+  getPopularMovies
+};

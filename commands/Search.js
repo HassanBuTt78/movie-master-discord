@@ -5,7 +5,7 @@ const { parseArray } = require("../utils/resultParser.js");
 module.exports = {
   data: new SlashCommandBuilder()
     .setName("search")
-    .setDescription(`Get you Movie by it's Name`)
+    .setDescription(`Get you Movie by it's Name (using correct spelling!)`)
     .addStringOption((option) =>
       option
         .setName("movie-name")
@@ -19,7 +19,7 @@ module.exports = {
     if (results.length > 0) {
       await interaction.editReply(parseArray(results, query));
     } else {
-      await interaction.editReply(`Sorry Can't Find '${query}'`);
+      await interaction.editReply(`Sorry Can't Find \`'${query}'\`\nMight be a spelling mistake, try typing exact name.`);
     }
   },
 };
