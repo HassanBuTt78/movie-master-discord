@@ -13,18 +13,15 @@ require("dotenv").config();
 
 const fs = require("fs");
 const path = require("path");
-const DBL = require('dblapi.js');
+const DBL = require("dblapi.js");
+const { log } = require("console");
 const client = new Client({
-  intents: [
-    GatewayIntentBits.Guilds,
-    GatewayIntentBits.GuildMessages,
-  ],
+  intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages],
 });
 
-const dbl = new DBL(process.env.DBLTOKEN, client);
+// const dbl = new DBL(process.env.DBLTOKEN, client);
 
-
-
+const errorMessage = "```There was an error executing this command```\nReport it in **[Support Server](<https://discord.gg/mJgFDJY26w>)** if issue Persists."
 
 // List of all commands
 const commands = [];
@@ -42,9 +39,9 @@ for (const file of commandFiles) {
   commands.push(command.data.toJSON());
 }
 
-dbl.on('posted', () => {
-  console.log('Server count posted!');
-});
+// dbl.on('posted', () => {
+//   console.log('Server count posted!');
+// });
 
 client.on("ready", async () => {
   // Get all ids of the servers
@@ -78,12 +75,12 @@ client.on("interactionCreate", async (interaction) => {
     console.error(error);
     try {
       await interaction.reply({
-        content: "`There was an error executing this command`",
+        content: errorMessage,
       });
     } catch (e) {
       try {
         await interaction.editReply({
-          content: "`There was an error executing this command`",
+          content: errorMessage,
         });
       } catch (e) {
         console.log(e);
@@ -99,31 +96,60 @@ client.on("interactionCreate", async (interaction) => {
   if (!type === "mov") {
     return;
   }
-  await interaction.deferUpdate();
-  const movie = await movData.movieById(movID);
-  await interaction.editReply(parsers.parseMovie(movie, interaction.user.id));
+  try {
+    await interaction.deferUpdate();
+    const movie = await movData.movieById(movID);
+    await interaction.editReply(parsers.parseMovie(movie, interaction.user.id));
+    
+  } catch (error) {
+    console.error(error);
+    try {
+      await interaction.reply({
+        content: errorMessage,
+      });
+    } catch (e) {
+      try {
+        await interaction.editReply({
+          content: errorMessage,
+        });
+      } catch (e) {
+        console.log(e);
+      }
+    }
+  }
+
 });
 
-client.on("guildCreate", (guild) => {
-  const welcomeMessage = `Hey @everyone \nIn mood for a movie? \nJust use to me watch or download movies for free in 2 clicks.\nDo \`/help\` for more on how.`;
-  const defaultChannel = guild.systemChannel;
+//Updating Commands for the server it joins and sends a greeting message
+client.on("guildCreate", async (guild) => {
+  const welcomeMessage = `Hey @everyone \nIn the mood for a movie? \nJust use me to watch or download movies for free in 2 clicks.\nDo \`/help\` for more information.`;
 
+  // Update guild commands
   const rest = new REST({ version: "10" }).setToken(process.env.TOKEN);
-  rest
-    .put(Routes.applicationGuildCommands(process.env.CLIENT_ID, guild.id), {
-      body: commands,
-    })
-    .then(() =>
-      console.log("Successfully updated commands for guild " + guild.id)
-    )
-    .catch(console.error);
+  try {
+    await rest.put(
+      Routes.applicationGuildCommands(process.env.CLIENT_ID, guild.id),
+      {
+        body: commands,
+      }
+    );
+    console.log("Successfully updated commands for guild " + guild.id);
+  } catch (error) {
+    console.error("Error updating commands:", error);
+  }
 
+  //Sending The Greeting Message
+  const defaultChannel = guild.systemChannel;
   if (defaultChannel) {
     defaultChannel
       .send(welcomeMessage)
-      .then((message) => console.log(`Sent welcome message in ${guild.name}`))
+      .then((message) => console.log(`Sent Greeting message in ${guild.name}`))
       .catch(console.error);
+  }else{
+    console.log(`Failed to find systemChannel in ${guild.name} - ${guild.id}`)
   }
+
+  // Record server count for statistics
   stats.recordServerCount(client);
 });
 

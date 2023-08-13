@@ -5,11 +5,13 @@ const {
   userMention,
 } = require("@discordjs/builders");
 
+const movieMasterIcon = "https://movie-master.uk.to/images/icons/favicon-32x32.png"
+
 const parseArray = (array, query) => {
   const buttons = array.map((data) => {
     return new ButtonBuilder()
-      .setCustomId("mov" + "-" + JSON.parse(JSON.stringify(data._id)))
-      .setLabel(data.title)
+      .setCustomId("mov" + "-" + data.id)
+      .setLabel(data.title_long)
       .setStyle("Secondary");
   });
   const row = new ActionRowBuilder().addComponents(buttons);
@@ -21,29 +23,35 @@ const parseArray = (array, query) => {
 };
 
 const parseMovie = (obj, user) => {
-  const torrentKeys = Object.keys(obj.links.torrents);
-  const torButtons = torrentKeys.map((data) => {
+  let torrents = obj.torrents
+  if(torrents.length > 5){ torrents = torrents.slice(0,5);}
+  const torButtons = torrents.map((data) => {
     return new ButtonBuilder()
-      .setLabel(data)
+      .setLabel(`${data.quality} Torrent`)
+      .setEmoji({ name: '⬇️' })
       .setStyle("Link")
-      .setURL(obj.links.torrents[data]);
+      .setURL(data.url);
   });
-  const strButtons = torrentKeys.map((data) => {
-    data = data.split(" ")[0];
+  const strButtons = torrents.map((data) => {
     return new ButtonBuilder()
-      .setLabel(data + " Stream")
+      .setLabel(data.quality + " Stream")
+      .setEmoji({name: '📽'})
       .setStyle("Link")
-      .setURL(`https://movie-master.uk.to/movie/watch/${obj._id}?q=${data}`);
+      .setURL(`https://movie-master.uk.to/movie/watch/${obj.id}?q=${data.quality}`);
   });
   const embed = new EmbedBuilder()
-    .setTitle(obj.title)
-    .setDescription(obj.teaser)
-    .setImage(obj.img)
-    .setColor((0, 219, 212))
+    .setTitle(obj.title_long)
+    .setDescription(obj.description_full)
+    .setImage(obj.large_cover_image)
+    .setColor([224, 12, 60])
+    .addFields({ name: "Genre", value: obj.genres.toString() ,inline: true })
+    .addFields({ name: "IMDB Rating", value: obj.rating.toString() ,inline: true })
+    .addFields({ name: "Length", value: obj.runtime.toString() + " minutes" ,inline: true })
+    .addFields({ name: "Bot Links", value: "**[Vote for Bot](https://top.gg/bot/1123604438934884513/vote) - [Write a Review](https://top.gg/bot/1123604438934884513#reviews) - [Support Server](https://discord.gg/mJgFDJY26w)**"})
     .setFooter({
-      text: `Visit --> https://movie-master.uk.to/movie/${obj._id}`,
+      text: `Visit --> https://movie-master.uk.to/movie/${obj.id}`,
       iconURL:
-        "https://clipartix.com/wp-content/uploads/2016/04/Popcorn-clip-art.png",
+        movieMasterIcon,
     });
   const row = new ActionRowBuilder().addComponents(torButtons);
   const row2 = new ActionRowBuilder().addComponents(strButtons);
@@ -64,11 +72,13 @@ const parseStats = (stats) => {
     .addFields({ name: "Movies Served", value: stats.queries.toString() })
     .addFields({ name: "Discord.js", value: "v14.11.0" })
     .addFields({ name: "Node.js", value: "v18.15.0" })
-    .setColor((0, 219, 212))
+    .setColor([224, 12, 60])
+    .addFields({ name: "Bot Links", value: "**[Vote for Bot](https://top.gg/bot/1123604438934884513/vote) - [Write a Review](https://top.gg/bot/1123604438934884513#reviews) - [Support Server](https://discord.gg/mJgFDJY26w)**"})
+    .setTimestamp()
     .setFooter({
       text: `https://movie-master.uk.to/`,
       iconURL:
-        "https://clipartix.com/wp-content/uploads/2016/04/Popcorn-clip-art.png",
+        movieMasterIcon,
     });
   const exportt = {
     content: "",
