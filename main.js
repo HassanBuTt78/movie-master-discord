@@ -19,7 +19,7 @@ const client = new Client({
   intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages],
 });
 
-// const dbl = new DBL(process.env.DBLTOKEN, client);
+const dbl = new DBL(process.env.DBLTOKEN, client);
 
 const errorMessage = "```There was an error executing this command```\nReport it in **[Support Server](<https://discord.gg/mJgFDJY26w>)** if issue Persists."
 
@@ -39,9 +39,9 @@ for (const file of commandFiles) {
   commands.push(command.data.toJSON());
 }
 
-// dbl.on('posted', () => {
-//   console.log('Server count posted!');
-// });
+dbl.on('posted', () => {
+  console.log('Server count posted!');
+});
 
 client.on("ready", async () => {
   // Get all ids of the servers

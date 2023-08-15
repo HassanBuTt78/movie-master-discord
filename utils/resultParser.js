@@ -39,9 +39,18 @@ const parseMovie = (obj, user) => {
       .setStyle("Link")
       .setURL(`https://movie-master.uk.to/movie/watch/${obj.id}?q=${data.quality}`);
   });
+
+  let description
+  if(obj.description_full.length > 1500){
+    description = `${obj.description_full.slice(0,1500)}...`
+  }
+  else{
+    description = obj.description_full
+  }
+  console.log(description.length)
   const embed = new EmbedBuilder()
     .setTitle(obj.title_long)
-    .setDescription(obj.description_full)
+    .setDescription(description)
     .setImage(obj.large_cover_image)
     .setColor([224, 12, 60])
     .addFields({ name: "Genre", value: obj.genres.toString() ,inline: true })
