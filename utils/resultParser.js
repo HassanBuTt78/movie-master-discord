@@ -47,7 +47,6 @@ const parseMovie = (obj, user) => {
   else{
     description = obj.description_full
   }
-  console.log(description.length)
   const embed = new EmbedBuilder()
     .setTitle(obj.title_long)
     .setDescription(description)
