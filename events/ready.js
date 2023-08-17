@@ -5,24 +5,11 @@ module.exports = {
   name: Events.ClientReady,
   once: true,
   execute(client) {
-    const guild_ids = client.guilds.cache.map((guild) => guild.id);
     const rest = new REST({ version: "10" }).setToken(process.env.TOKEN);
     const commands = [];
     client.commands.forEach((command) => {
       commands.push(command.data.toJSON());
     });
-
-    for (const guildId of guild_ids) {
-      rest
-        .put(Routes.applicationGuildCommands(process.env.CLIENT_ID, guildId), {
-          body: [],
-        })
-        .then(() =>
-          console.log("Successfully updated commands for guild " + guildId)
-        )
-        .catch(console.error);
-    }
-
     rest
       .put(Routes.applicationCommands(process.env.CLIENT_ID), {
         body: commands,
