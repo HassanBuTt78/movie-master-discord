@@ -1,7 +1,7 @@
 # Movie Master Discord Bot
 ### Movie Master is  a simple bot that can help you to watch and download movies for free from within Discord in easy 2 clicks.
 
-You can add bot in your server using this link: https://bit.ly/Movie-Master-
+You can invite bot in your server using this link: https://bit.ly/Movie-Master-
 
 You can use command:  
 ` /ping ` to see if the bot is alive.  
