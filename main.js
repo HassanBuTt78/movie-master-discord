@@ -10,10 +10,10 @@ const client = new Client({
 });
 
 // **** Posting Server Count to Top.gg ****
-// const dbl = new DBL(process.env.DBLTOKEN, client);
-// dbl.on("posted", () => {
-//   console.log("Server count posted!");
-// });
+const dbl = new DBL(process.env.DBLTOKEN, client);
+dbl.on("posted", () => {
+  console.log("Server count posted!");
+});
 
 // **** Listing all commands ****
 client.commands = new Collection();
@@ -44,6 +44,7 @@ for (const file of eventFiles) {
   }
 }
 
+// ****** Connecting Database and Logging in Bot ******
 database.connectDB().then(() => {
   client.login(process.env.TOKEN);
 });
