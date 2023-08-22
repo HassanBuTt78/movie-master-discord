@@ -5,4 +5,9 @@ function shuffleArray(array) {
   }
 }
 
-module.exports = { shuffleArray };
+function pickRandomFrom(array) {
+  const randomIndex = Math.floor(Math.random() * array.length);
+  return array[randomIndex];
+}
+
+module.exports = { shuffleArray, pickRandomFrom };

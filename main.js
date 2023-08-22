@@ -44,6 +44,7 @@ for (const file of eventFiles) {
   }
 }
 
+// ****** Connecting Database and Logging in Bot ******
 database.connectDB().then(() => {
   client.login(process.env.TOKEN);
 });

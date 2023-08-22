@@ -20,7 +20,7 @@ module.exports = {
     client.user.setPresence({
       activities: [
         {
-          name: "53,000+ Movies",
+          name: "/suggest",
         },
       ],
       status: "online",

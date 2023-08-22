@@ -1,5 +1,6 @@
 const axios = require("axios");
-const {shuffleArray} = require("../utils/arrayHelper")
+const { shuffleArray, pickRandomFrom } = require("../utils/arrayHelper");
+const { resolveColor } = require("discord.js");
 
 const movieById = async (movieId) => {
   const apiUrl = `https://yts.mx/api/v2/movie_details.json?movie_id=${movieId}`;
@@ -20,9 +21,13 @@ const query = async (query = "", limit = 20, page = 1, genre = "") => {
   const apiUrl = `https://yts.mx/api/v2/list_movies.json?limit=${limit}&page=${page}&query_term=${query}&genre=${genre}&sort_by=download_count`;
   try {
     const response = await axios.get(apiUrl);
-    if(response.status != 200) return {error : "Error 500! There has been a error in server"}
-    if(response.data.data.movie_count == 0) return {error: `No Result for ${query} - double check movie name and spelling.`}
-    return response.data.data.movies
+    if (response.status != 200)
+      return { error: "Error 500! There has been a error in server" };
+    if (response.data.data.movie_count == 0)
+      return {
+        error: `No Result for ${query} - double check movie name and spelling.`,
+      };
+    return response.data.data.movies;
   } catch (error) {
     console.error(`Failed to fetch data from API: ${error.message}`);
   }
@@ -57,28 +62,44 @@ const getSimilarMovies = async (_id) => {
   }
 };
 
-
 const getPopularMovies = async (_limit = 20) => {
-    const apiUrl = `https://yts.mx/api/v2/list_movies.json?sort_by=download_count&limit=${_limit}&query_term=2023`;
-  
-    try {
-      const response = await axios.get(apiUrl);
-      if (response.status === 200) {
-        const movies = response.data.data.movies;
-        shuffleArray(movies)
-        return movies.slice(0,4);
-      } else {
-        throw new Error("API request failed");
-      }
-    } catch (error) {
-      console.error(`Failed to fetch data from API: ${error.message}`);
+  const apiUrl = `https://yts.mx/api/v2/list_movies.json?sort_by=download_count&limit=${_limit}&query_term=2023`;
+
+  try {
+    const response = await axios.get(apiUrl);
+    if (response.status === 200) {
+      const movies = response.data.data.movies;
+      shuffleArray(movies);
+      return movies.slice(0, 4);
+    } else {
+      throw new Error("API request failed");
     }
-  };
+  } catch (error) {
+    console.error(`Failed to fetch data from API: ${error.message}`);
+  }
+};
+
+const suggestMovie = async (genre, year) => {
+  const apiUrl = `https://yts.mx/api/v2/list_movies.json?sort_by=download_count&limit=10&genre=${genre}&query_term=${year}`;
+
+  try {
+    const response = await axios.get(apiUrl);
+    if (response.status === 200) {
+      const movies = response.data.data.movies;
+      return pickRandomFrom(movies);
+    } else {
+      throw new Error("API request failed");
+    }
+  } catch (error) {
+    console.error(`Failed to fetch data from API: ${error.message}`);
+  }
+};
 
 module.exports = {
   movieById,
   query,
   getMoviesWithMost,
   getSimilarMovies,
-  getPopularMovies
+  getPopularMovies,
+  suggestMovie
 };

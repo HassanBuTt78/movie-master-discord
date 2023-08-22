@@ -14,9 +14,9 @@ module.exports = {
         .then((message) =>
           console.log(`Sent Greeting message in ${guild.name}`)
         )
-        .catch(console.error);
+        .catch((e)=>{console.error(`Error Sending Welcome Message to ${guild.name}`)});
     } else {
-      console.log(
+      console.error(
         `Failed to find systemChannel in ${guild.name} - ${guild.id}`
       );
     }
