@@ -40,6 +40,8 @@ const parseMovie = (obj, user) => {
       .setURL(`https://movie-master.uk.to/movie/watch/${obj.id}?q=${data.quality}`);
   });
 
+  const magnetButton = [ new ButtonBuilder().setLabel("Magnet Links").setEmoji({name: "🧲"}).setStyle("Link").setURL(`https://movie-master.uk.to/movie/${obj.id}`) ]
+
   let description
   if(obj.description_full.length > 1500){
     description = `${obj.description_full.slice(0,1500)}...`
@@ -52,10 +54,10 @@ const parseMovie = (obj, user) => {
     .setDescription(description)
     .setImage(obj.large_cover_image)
     .setColor([224, 12, 60])
-    .addFields({ name: "Genre", value: obj.genres.toString() ,inline: true })
+    .addFields({ name: "Genre", value: obj.genres.join(', ') ,inline: true })
     .addFields({ name: "IMDB Rating", value: obj.rating.toString() ,inline: true })
     .addFields({ name: "Length", value: obj.runtime.toString() + " minutes" ,inline: true })
-    .addFields({ name: "Bot Links", value: "**[Vote for Bot](https://top.gg/bot/1123604438934884513/vote) - [Write a Review](https://top.gg/bot/1123604438934884513#reviews) - [Support Server](https://discord.gg/mJgFDJY26w)**"})
+    .addFields({ name: "Bot Links", value: "[Invite Bot](https://discord.com/oauth2/authorize?client_id=1123604438934884513&permissions=2147698688&scope=bot%20applications.commands)  |  [Vote for Bot](https://top.gg/bot/1123604438934884513/vote)  |  [Write a Review](https://top.gg/bot/1123604438934884513#reviews)  |  [Support Server](https://discord.gg/mJgFDJY26w)"})
     .setFooter({
       text: `Visit --> https://movie-master.uk.to/movie/${obj.id}`,
       iconURL:
@@ -63,11 +65,12 @@ const parseMovie = (obj, user) => {
     });
   const row = new ActionRowBuilder().addComponents(torButtons);
   const row2 = new ActionRowBuilder().addComponents(strButtons);
+  const row3 = new ActionRowBuilder().addComponents(magnetButton);
   embed.components = [{ type: "ACTION_ROW", components: [] }];
   const exportt = {
     content: `Here is your Movie, ${userMention(user)}`,
     embeds: [embed],
-    components: [row, row2],
+    components: [row, row2, row3],
   };
   return exportt;
 };
@@ -81,7 +84,7 @@ const parseStats = (stats) => {
     .addFields({ name: "Discord.js", value: "v14.11.0" })
     .addFields({ name: "Node.js", value: "v18.15.0" })
     .setColor([224, 12, 60])
-    .addFields({ name: "Bot Links", value: "**[Vote for Bot](https://top.gg/bot/1123604438934884513/vote) - [Write a Review](https://top.gg/bot/1123604438934884513#reviews) - [Support Server](https://discord.gg/mJgFDJY26w)**"})
+    .addFields({ name: "Bot Links", value: "[Invite Bot](https://discord.com/oauth2/authorize?client_id=1123604438934884513&permissions=2147698688&scope=bot%20applications.commands)  |  [Vote for Bot](https://top.gg/bot/1123604438934884513/vote)  |  [Support Server](https://discord.gg/mJgFDJY26w)"})
     .setTimestamp()
     .setFooter({
       text: `https://movie-master.uk.to/`,

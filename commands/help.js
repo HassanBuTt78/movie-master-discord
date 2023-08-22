@@ -9,8 +9,9 @@ const embed = new EmbedBuilder()
     .addFields({ name: "**/help**", value: "```Get list of commands bot supports```" ,inline: true })
     .addFields({ name: "**/random**", value: "```Brings you a totally random movie```" ,inline: true })
     .addFields({ name: "**/search**", value: "```Allows you to search and get a movie```" ,inline: true })
+    .addFields({ name: "**/suggest**", value: "```Suggests you a good movie of your liking```" ,inline: true })
     .addFields({ name: "**/stats**", value: "```Brings you the stats related to Movie Master```" ,inline: true })
-    .addFields({ name: "Useful Links", value: "**[Vote for Bot](https://top.gg/bot/1123604438934884513/vote) - [Write a Review](https://top.gg/bot/1123604438934884513#reviews) - [Support Server](https://discord.gg/mJgFDJY26w)**"})
+    .addFields({ name: "Useful Links", value: "[Invite Bot](https://discord.com/oauth2/authorize?client_id=1123604438934884513&permissions=2147698688&scope=bot%20applications.commands)  |  [Vote for Bot](https://top.gg/bot/1123604438934884513/vote)  |  [Write a Review](https://top.gg/bot/1123604438934884513#reviews)  |  [Support Server](https://discord.gg/mJgFDJY26w)"})
     .setColor([224, 12, 60])
     .setFooter({
         text: `Visit -->  https://movie-master.uk.to/`,

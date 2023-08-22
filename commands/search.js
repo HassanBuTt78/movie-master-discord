@@ -9,7 +9,7 @@ module.exports = {
     .addStringOption((option) =>
       option
         .setName("movie-name")
-        .setDescription("Search Field")
+        .setDescription("Search here the name of movie you want to watch")
         .setRequired(true)
     ),
   async execute(interaction) {
