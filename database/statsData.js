@@ -1,6 +1,8 @@
 const { User, Stat } =  require("./database.js")
+const statsEnabled = "DATABASE" in process.env
 
 const updateStats = async (update) => {
+  if (!statsEnabled) return
     const updated = await Stat.findOneAndUpdate(
       { _id: process.env.STATS_DOCUMENT_ID },
       update
@@ -9,11 +11,13 @@ const updateStats = async (update) => {
   };
 
 const getstats = async () => {
+  if (!statsEnabled) return
     let found = await Stat.findOne({ _id: process.env.STATS_DOCUMENT_ID });
     return await found;
   };
   
   const addUser = async (userId) => {
+  if (!statsEnabled) return
     const user = await User.findOne({ userId: userId });
     if (!user) {
       const newUser = new User({ userId: userId });
@@ -27,6 +31,7 @@ const getstats = async () => {
   };
   
   const countUsers = async () => {
+  if (!statsEnabled) return
     let userCount;
     await User.count({}).then((count) => {
       userCount = count;
