@@ -10,10 +10,14 @@ const client = new Client({
 });
 
 // **** Posting Server Count to Top.gg ****
-const dbl = new DBL(process.env.DBLTOKEN, client);
-dbl.on("posted", () => {
-  console.log("Server count posted!");
-});
+
+if("DBLTOKEN" in process.env){
+
+  const dbl = new DBL(process.env.DBLTOKEN, client);
+  dbl.on("posted", () => {
+    console.log("Server count posted!");
+  });
+}
 
 // **** Listing all commands ****
 client.commands = new Collection();
@@ -22,6 +26,11 @@ const commandsPath = path.join(__dirname, "commands");
 const commandFiles = fs
   .readdirSync(commandsPath)
   .filter((file) => file.endsWith(".js"));
+if(!("DATABASE" in process.env)){
+  commandFiles.splice(commandFiles.length - 2, 1)
+  console.log(commandFiles)
+}
+
 for (const file of commandFiles) {
   const filePath = path.join(commandsPath, file);
   const command = require(filePath);

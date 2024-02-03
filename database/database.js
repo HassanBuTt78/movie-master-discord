@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 
 const connectDB = async () => {
+  if("DATABASE" in process.env){
   let db = await mongoose
     .connect(process.env.DATABASE, {
       useNewUrlParser: true,
@@ -10,6 +11,7 @@ const connectDB = async () => {
       console.log("db connected successfully");
     })
     .catch((e) => console.log(e));
+  }
 };
 
 const movieSchema = new mongoose.Schema(
